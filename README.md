@@ -8,7 +8,7 @@
 
 ## Intro.
 
-This repo. is highly inspired by [pull-mux](https://github.com/nichoth/pull-mux) but support add sun stream dynamically.
+This repo. is highly inspired by [pull-mux](https://github.com/nichoth/pull-mux) but support add sub-stream dynamically.
 
 ## Usage
 
