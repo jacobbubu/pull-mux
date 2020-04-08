@@ -1,11 +1,10 @@
 import * as pull from 'pull-stream'
-import { Demux } from '../src/demux'
-import { Event } from '../src/event'
+import { Demux, Event } from '../src'
 
 const muxed = pull.values([Event('a', 'a1'), Event('a', 'a2'), Event('b', 'b1'), Event('a', 'a3')])
-const dx = new Demux(muxed)
-dx.on('open', (source: pull.Source<any>, type: string) => {
-  console.log(`type of source(${type}) is created`)
+const demuxed = new Demux()
+demuxed.on('open', (source: pull.Source<any>, type: string) => {
+  console.log(`source(${type}) is created`)
   pull(
     source,
     pull.drain((res) => {
@@ -13,8 +12,8 @@ dx.on('open', (source: pull.Source<any>, type: string) => {
     })
   )
 })
-dx.on('close', (source: any, type: string) => {
-  console.log('closed source', type)
+demuxed.on('close', (source: any, type: string) => {
+  console.log(`source(${type}) is closed`)
 })
 
-dx.start()
+pull(muxed, demuxed)

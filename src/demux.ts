@@ -1,19 +1,16 @@
 import * as pull from 'pull-stream'
 import { EventEmitter } from 'events'
 import { pushable } from '@jacobbubu/pull-pushable'
-import tee from '@jacobbubu/pull-tee'
 import { MuxEvent } from './event'
 
 export class Demux extends EventEmitter {
   private _streams: Record<string, pull.Source<any>> = {}
+  private _sink: (read: pull.Source<MuxEvent>) => void
 
-  constructor(private readonly _source: pull.Source<MuxEvent>) {
+  constructor() {
     super()
-  }
-
-  private sink() {
     const self = this
-    return function (read: pull.Source<MuxEvent>) {
+    this._sink = function (read: pull.Source<MuxEvent>) {
       read(null, function next(err, event) {
         if (err) {
           // clean up
@@ -43,8 +40,7 @@ export class Demux extends EventEmitter {
     }
   }
 
-  start() {
-    const t = tee(this.sink())
-    pull(this._source, t, pull.drain())
+  get sink() {
+    return this._sink
   }
 }
